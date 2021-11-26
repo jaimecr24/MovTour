@@ -9,7 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     category = db.Column(db.Boolean(), unique=False, nullable=False)
     #false for user, true for admin
-    login = db.relationship("Login", uselist=False)
+    login = db.relationship("Login", back_populates="user", uselist=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -27,7 +27,7 @@ class Login(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     lastTime = db.Column(db.Date)
-    user = db.relationship("User")
+    user = db.relationship("User", back_populates="login")
     
     def __repr__(self):
         return '<Login %r>' % self.email
