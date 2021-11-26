@@ -109,6 +109,9 @@ class Scene(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "idFilm": self.idFilm,
+            "idPlace": self.idPlace,
+            "description": self.description
         }
 
 
@@ -126,6 +129,8 @@ class FavPlace(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "idUser": self.idUser,
+            "idPlace": self.idPlace,
         }
 
 
@@ -139,11 +144,15 @@ class Comment(db.Model):
     place = db.relationship('Place')
     
     def __repr__(self):
-        return '<FavPlace %r>' % self.id
+        return '<Comment %r>' % self.id
 
     def serialize(self):
         return {
             "id": self.id,
+            "idUser": self.idUser,
+            "idPlace": self.idPlace,
+            "description": self.description,
+            "time": self.time
         }
 
 
@@ -160,6 +169,9 @@ class PhotoFilm(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "idFilm": self.idFilm,
+            "urlPhoto": self.urlPhoto,
+            "description": self.description
         }
 
 
@@ -176,4 +188,7 @@ class PhotoPlace(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "idPlace": self.idPlace,
+            "urlPhoto": self.urlPhoto,
+            "description": self.description
         }
