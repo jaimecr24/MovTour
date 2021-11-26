@@ -18,6 +18,9 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "username": self.username,
+            "category": self.category,
+            "lasTime": self.lasTime
         }
 
 class Customer(db.Model):
@@ -34,7 +37,9 @@ class Customer(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "idUser": self.idUser,
+            "name": self.name,
+            "last_name": self.last_name
         }
 
 
@@ -52,6 +57,9 @@ class Film(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "director": self.director,
+            "year": self.year,
+            "description": self.description
         }
 
 
@@ -72,7 +80,14 @@ class Place(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "idCountry": self.idCountry,
             "name": self.name,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "description": self.description,
+            "countLikes": self.countLikes,
+            "entryDate": self.entryDate
+
         }
     
 
@@ -89,6 +104,8 @@ class Country(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "urlFlag": self.urlFlag,
+            "description": self.description
         }
 
 
