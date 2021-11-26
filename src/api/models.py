@@ -12,7 +12,7 @@ class User(db.Model):
     customer = db.relationship("Customer", back_populates="user", uselist=False)
     
     def __repr__(self):
-        return '<Login %r>' % self.email
+        return '<User %r>' % self.email
 
     def serialize(self):
         return {
@@ -32,7 +32,7 @@ class Customer(db.Model):
     user = db.relationship("User", back_populates="customer")
 
     def __repr__(self):
-        return '<Customer %r>' % self.username
+        return '<Customer %r>' % self.name
 
     def serialize(self):
         return {
