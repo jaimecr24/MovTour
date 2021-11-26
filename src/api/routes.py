@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Login
+from api.models import db, User, Customer
 from api.utils import generate_sitemap, APIException
 
 api = Blueprint('api', __name__)
@@ -33,14 +33,14 @@ def signup():
     user = Login.query.filter_by(email=email).first()
     if user is None:
         #Create registres in User and Login
-        newuser = User(name=name, last_name=last_name, username=username, category=category)
+        newuser = User(email=email, password=password, username=username, lastTime=None, category=category)
         db.session.add(newuser)
         #Query to get the id of new user
         userdata = User.query.filter_by(username=username).first()
-        userlogin = Login(idUser=userdata.id, email=email, password=password, lastTime=None)
-        db.session.add(userlogin)
+        customer = Customer(idUser=userdata.id, name=name, last_name=last_name)
+        db.session.add(customer)
         db.session.commit()
-        return jsonify({"message": "ok", "id": userdata.id, "name":newuser.name, "last_name":newuser.last_name}), 200
+        return jsonify({"message": "ok", "id": userdata.id, "name":customer.name, "last_name":customer.last_name}), 200
     else:
         return jsonify({"error":"user already exists"}), 400
 
@@ -50,16 +50,14 @@ def create_token():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     # Query your database for username and password
-    userlogin = Login.query.filter_by(email=email, password=password).first()
-    if userlogin is None:
-        userlogin = Login.query.filter_by(email=email).first()
-        if userlogin is None:
-            # the user was not found on the database
-            return jsonify({"error": "email not exists"}), 401
-        else:
-            # bad password
-            return jsonify({"error": "bad password"}), 401
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        # the user was not found on the database
+        return jsonify({"error": "email not exists"}), 401
+    elif user.password != password:
+        # bad password
+        return jsonify({"error": "bad password"}), 401
     
     # create a new token with the user id inside
     access_token = create_access_token(identity=userlogin.idUser)
-    return jsonify({ "token": access_token, "user_id": userlogin.idUser }), 200
+    return jsonify({ "token": access_token, "user_id": user.idUser }), 200
