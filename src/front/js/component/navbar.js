@@ -2,17 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "bootstrap";
 import "bootstrap/js/dist/dropdown";
+import cameraImgUrl from "../../img/camera.png";
+import profileImgUrl from "../../img/profile.png";
 
 export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-success" style={{ fontSize: "large" }}>
 			<div className="container">
 				<Link to="/">
-					<img
-						src="http://assets.stickpng.com/images/5f54a242cce59c0004901cbc.png"
-						className="navbar-brand "
-						style={{ width: "73px", marginLeft: "500px" }}
-					/>
+					<img src={cameraImgUrl} className="navbar-brand " style={{ width: "73px", marginLeft: "500px" }} />
 				</Link>
 			</div>
 
@@ -64,10 +62,7 @@ export const Navbar = () => {
 						aria-haspopup="true"
 						aria-expanded="false">
 						{" "}
-						<img
-							src="http://assets.stickpng.com/thumbs/585e4bf3cb11b227491c339a.png"
-							style={{ width: "73px" }}
-						/>
+						<img src={profileImgUrl} style={{ width: "73px" }} />
 					</a>
 
 					<div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
