@@ -30,7 +30,7 @@ def signup():
     category = False #User not admin
 
     #Check if user exists in database
-    user = Login.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
     if user is None:
         #Create registres in User and Login
         newuser = User(email=email, password=password, username=username, lastTime=None, category=category)
