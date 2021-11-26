@@ -1,3 +1,9 @@
-/* 
-    General Styles
-*/
+.navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+}
+
+body{
+    font-size: large
+}
