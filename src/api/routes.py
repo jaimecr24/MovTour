@@ -59,5 +59,5 @@ def create_token():
         return jsonify({"error": "bad password"}), 401
     
     # create a new token with the user id inside
-    access_token = create_access_token(identity=userlogin.idUser)
-    return jsonify({ "token": access_token, "user_id": user.idUser }), 200
+    access_token = create_access_token(identity=user.id)
+    return jsonify({ "token": access_token, "user_id": user.id }), 200
