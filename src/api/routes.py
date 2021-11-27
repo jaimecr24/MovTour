@@ -25,22 +25,26 @@ def signup():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     name = request.json.get("name", None)
-    last_name = request.json.get("last_name", None)
+    lastname = request.json.get("lastname", None)
     username = request.json.get("username", None)
-    category = False #User not admin
+    category = request.json.get("category", None)
 
     #Check if user exists in database
     user = User.query.filter_by(email=email).first()
     if user is None:
-        #Create registres in User and Login
-        newuser = User(email=email, password=password, username=username, lastTime=None, category=category)
-        db.session.add(newuser)
-        #Query to get the id of new user
-        userdata = User.query.filter_by(username=username).first()
-        customer = Customer(idUser=userdata.id, name=name, last_name=last_name)
-        db.session.add(customer)
-        db.session.commit()
-        return jsonify({"message": "ok", "id": userdata.id, "name":customer.name, "last_name":customer.last_name}), 200
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            #Create registres in User and Login
+            newuser = User(email=email, password=password, username=username, lastTime=None, category=category)
+            db.session.add(newuser)
+            #Query to get the id of new user
+            userdata = User.query.filter_by(username=username).first()
+            customer = Customer(idUser=userdata.id, name=name, last_name=lastname)
+            db.session.add(customer)
+            db.session.commit()
+            return jsonify({"message": "ok", "id": userdata.id, "name":customer.name, "last_name":customer.last_name}), 200
+        else:
+            return jsonify({"error":"username already exists"}), 400
     else:
         return jsonify({"error":"user already exists"}), 400
 

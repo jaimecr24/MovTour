@@ -16,6 +16,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			]
 		},
 		actions: {
+			addUser: (name, lastname, username, email, password) => {
+				console.log(name + lastname + username + email + password);
+				fetch(process.env.BACKEND_URL + "/api/signup", {
+					method: "POST",
+					body: JSON.stringify({
+						name: name,
+						lastname: lastname,
+						username: username,
+						email: email,
+						password: password
+					}),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+					.then(res => res.json())
+					.then(res => ("error" in res ? alert(res["error"]) : alert("user signed ok")))
+					.catch(error => console.log(error));
+			},
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
