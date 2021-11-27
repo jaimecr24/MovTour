@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer, Place, Country, FavPlace
+from api.models import db, User, Customer, Film, Place, Country, FavPlace
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 
@@ -119,4 +119,43 @@ def getPlace(place_id):
         db.session.delete(place)
         db.session.commit()
         return jsonify({'message': f'place with id {place_id} deleted'}), 200
+      
+@api.route('/films', methods=['GET', 'POST'])
+def list_film():
+     # GET all films
+    if request.method == 'GET':
+        list_film = Film.query.all()
+    return jsonify([film.serialize() for film in list_film]), 200
+
+    # POST a new film
+    if request.method == 'POST':
+        film_to_add = request.json
+
+    # Data validation
+    if film_to_add is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'name' not in film_to_add:
+        raise APIException('You need to add the name', status_code=400)
+    if 'img_url' not in film_to_add:
+         url = None
+    else: url = film_to_add["img_url"]
+
+    new_film = Film(name=film_to_add["name"], img_url=url)
+    db.session.add(new_film)
+    db.session.commit()
+    return jsonify(new_film.serialize()), 200
+
+@api.route('/films/<int:film_id>', methods=['GET', 'DELETE'])
+def getfilm(film_id):
+
+    # GET a film
+    if request.method == 'GET':
+        film = Film.query.filter_by(id=film_id) 
+    return jsonify(film.serialize()), 200
+
+    # DELETE a film
+    if request.method == 'DELETE':
+        db.session.delete(film)
+        db.session.commit()
+
 
