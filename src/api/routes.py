@@ -3,8 +3,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer
+from api.models import db, User, Customer, Place, Country, FavPlace
 from api.utils import generate_sitemap, APIException
+from datetime import datetime
 
 api = Blueprint('api', __name__)
 
@@ -61,3 +62,61 @@ def create_token():
     # create a new token with the user id inside
     access_token = create_access_token(identity=user.id)
     return jsonify({ "token": access_token, "user_id": user.id }), 200
+
+    #ALL PLACES GET
+@api.route('/places', methods=['GET', 'POST'])
+def listPlaces():
+     # GET all places
+    list_places = Place.query.all()
+    if request.method == 'GET':
+        return jsonify([place.serialize() for place in list_places]), 200
+
+    # POST a new place
+    if request.method == 'POST':
+        data = request.json
+        id = data.get("id")
+        existsPlace = Place.query.filter_by(id=id).first()
+        existsCountry = Country.query.filter_by(id=data.get("idCountry")).first()
+        likes=FavPlace.query.filter_by(idPlace=id).count()
+
+    # Data validation
+    if existsPlace is not None:        
+        raise APIException(f"place with id {id} already exists", status_code=400)
+    if existsCountry is None:        
+        raise APIException("Country not found in data base", status_code=400)
+    if data is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'name' not in data:
+        raise APIException('You need to add the name', status_code=400)
+    if 'idCountry' not in data:
+        raise APIException('You need to add the country id', status_code=400)
+    
+    if 'id' in data:
+        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now())
+    elif 'id' not in data:
+        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now())
+    db.session.add(new_place)
+    db.session.commit()
+    return jsonify([{'message': 'added ok'}, new_place.serialize()]),200
+
+
+#SINGLE PLACE GET AND DELETE
+@api.route('/places/<int:place_id>', methods=['GET', 'DELETE'])
+def getPlace(place_id):
+
+    place = Place.query.filter_by(id=place_id).first()
+
+    # Data validation
+    if place is None:
+        raise APIException(f"place with id {place_id} not found in data base", status_code=404)
+
+    #GET a place
+    if request.method == 'GET':
+        return jsonify(place.serialize()), 200
+
+    #DELETE a place
+    if request.method == 'DELETE':
+        db.session.delete(place)
+        db.session.commit()
+        return jsonify({'message': f'place with id {place_id} deleted'}), 200
+
