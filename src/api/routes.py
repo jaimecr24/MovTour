@@ -99,3 +99,4 @@ def getfilm(film_id):
     if request.method == 'DELETE':
         db.session.delete(film)
         db.session.commit()
+
