@@ -20,6 +20,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+			fetchFilms: () => {
+				console.log(process.env.BACKEND_URL + "/api/films");
+				fetch("https://3001-emerald-cat-br9awc85.ws-eu20.gitpod.io/api/films")
+					.then(resp => resp.json())
+					.then(data => setStore({ films: data }))
+					.catch(error => console.log("Error loading message from backend", error));
+			},
 
 			getMessage: () => {
 				// fetching data from the backend
