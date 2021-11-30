@@ -14,11 +14,9 @@ export const Home = () => {
 	};
 
 	return (
-		<div className="text-center mt-5">
+		<div className="text-center mt-3">
 			<h1>MovTour</h1>
-			<p>
-				<img src={icon} style={style} />
-			</p>
+
 			<p>“The world isnt in your books and maps, it is out there.” ― The Hobbit, J.R.R. Tolkien</p>
 			<div className="row">
 				<div className="col-6 offset-3">
@@ -38,34 +36,11 @@ export const Home = () => {
 			</div>
 			<br />
 			<div className="row">
-				<div className="col-3 offset-1">
-					<div className="card text-white bg-secondary mb-3" style={cardStyle}>
-						<div className="card-header">Sitios de Rodaje</div>
-						<div className="card-body">
-							<h5 className="card-title">Title</h5>
-							<img src="..." style={{ backgroundColor: "white", width: "100px", height: "100px" }} />
-						</div>
-					</div>
-				</div>
-
-				<div className="col-3 offset-1">
-					<div className="card text-white bg-secondary mb-3" style={cardStyle}>
-						<div className="card-header">Sitios de Rodaje</div>
-						<div className="card-body">
-							<h5 className="card-title">Title</h5>
-							<img src="..." style={{ backgroundColor: "white", width: "100px", height: "100px" }} />
-						</div>
-					</div>
-				</div>
-
-				<div className="col-3 offset-1">
-					<div className="card text-white bg-secondary mb-3" style={cardStyle}>
-						<div className="card-header">Sitios de Rodaje</div>
-						<div className="card-body">
-							<h5 className="card-title">Title</h5>
-							<img src="..." style={{ backgroundColor: "white", width: "100px", height: "100px" }} />
-						</div>
-					</div>
+				<div className="offset-3 col-6 offset-3">
+					<iframe
+						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26432.43434605815!2d-118.34398771265504!3d34.09374955803937!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2bf07045279bf%3A0xf67a9a6797bdfae4!2sHollywood%2C%20Los%20%C3%81ngeles%2C%20California%2C%20EE.%20UU.!5e0!3m2!1ses!2ses!4v1638286747086!5m2!1ses!2ses"
+						style={{ width: "600px", height: "350px" }}
+					/>
 				</div>
 			</div>
 		</div>

@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			singlePlace: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -27,6 +28,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(resp => resp.json())
 					.then(data => setStore({ message: data.message }))
 					.catch(error => console.log("Error loading message from backend", error));
+			},
+			getPlaces: () => {
+				// fetching data from the backend
+				console.log(process.env.BACKEND_URL + "/api/places");
+				//fetch(process.env.BACKEND_URL + "api/places")
+				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places")
+					.then(resp => resp.json())
+					.then(data => setStore({ places: data }))
+					.catch(error => console.log("Error loading places from backend", error));
+			},
+			getSinglePlace: id => {
+				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							singlePlace: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+			resetSinglePlace: () => {
+				setStore({
+					singlePlace: null
+				});
+				localStorage.removeItem("id");
 			},
 			changeColor: (index, color) => {
 				//get the store

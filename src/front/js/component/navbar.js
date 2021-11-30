@@ -48,7 +48,9 @@ export const Navbar = () => {
 								fontFamily: "Permanent Marker",
 								fontStyle: "cursive"
 							}}>
-							Sitios
+							<Link to="/places" style={{ textDecoration: "none", color: "white" }}>
+								Sitios
+							</Link>
 						</a>
 					</li>
 				</ul>
