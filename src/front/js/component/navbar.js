@@ -7,7 +7,7 @@ import profileImgUrl from "../../img/profile.png";
 
 export const Navbar = () => {
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-success" style={{ fontSize: "large" }}>
+		<nav className="navbar navbar-expand-lg" style={{ fontSize: "large", backgroundColor: "transparent" }}>
 			<div className="container">
 				<Link to="/">
 					<img src={cameraImgUrl} className="navbar-brand " style={{ width: "73px", marginLeft: "500px" }} />
@@ -25,7 +25,9 @@ export const Navbar = () => {
 								fontFamily: "Permanent Marker",
 								fontStyle: "cursive"
 							}}>
-							Películas
+							<Link to="/films" style={{ color: "white" }}>
+								Películas
+							</Link>
 						</a>
 					</li>
 					<li className="nav-item">
