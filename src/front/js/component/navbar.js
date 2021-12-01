@@ -11,7 +11,7 @@ export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-success" style={{ fontSize: "large" }}>
+		<nav className="navbar navbar-expand-lg" style={{ fontSize: "large", backgroundColor: "transparent" }}>
 			<div className="container">
 				<Link to="/">
 					<img src={cameraImgUrl} className="navbar-brand " style={{ width: "73px", marginLeft: "500px" }} />
@@ -29,7 +29,9 @@ export const Navbar = () => {
 								marginRight: "30px",
 								color: "white"
 							}}>
-							Películas
+							<Link to="/films" style={{ color: "white" }}>
+								Películas
+							</Link>
 						</a>
 					</li>
 					<li className="nav-item">
@@ -48,7 +50,9 @@ export const Navbar = () => {
 							style={{
 								color: "white"
 							}}>
-							Sitios
+							<Link to="/places" style={{ textDecoration: "none", color: "white" }}>
+								Sitios
+							</Link>
 						</a>
 					</li>
 				</ul>

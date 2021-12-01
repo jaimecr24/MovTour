@@ -13,6 +13,12 @@ import { Footer } from "./component/footer";
 import { FormSignUp } from "./component/formsignup";
 import { FormLogin } from "./component/formlogin";
 
+import { Places } from "./pages/places";
+import { SinglePlace } from "./pages/singlePlace";
+
+
+import { Films } from "./pages/films";
+
 //create your first component
 const Layout = () => {
 	//the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -28,6 +34,18 @@ const Layout = () => {
 					<Switch>
 						<Route exact path="/">
 							<Home />
+						</Route>
+
+						<Route exact path="/places">
+							<Places />
+						</Route>
+						<Route exact path="/place">
+							<SinglePlace />
+							</Route>
+
+						<Route exact path="/films">
+							<Films />
+
 						</Route>
 						<Route exact path="/demo">
 							<Demo />
@@ -45,7 +63,7 @@ const Layout = () => {
 							<h1>Not found!</h1>
 						</Route>
 					</Switch>
-					<Footer />
+					{/* <Footer /> */}
 				</ScrollToTop>
 			</BrowserRouter>
 		</div>
