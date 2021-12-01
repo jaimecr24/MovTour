@@ -52,16 +52,22 @@ def signup():
 @api.route("/login", methods=["POST"])
 def create_token():
     email = request.json.get("email", None)
+    username = request.json.get("username", None)
     password = request.json.get("password", None)
-    # Query your database for username and password
-    user = User.query.filter_by(email=email).first()
+    
+    # Query your database for email/username and password
+    if username is None:
+        user = User.query.filter_by(email=email).first()
+    else:
+        user = User.query.filter_by(username=username).first()
+
     if user is None:
         # the user was not found on the database
-        return jsonify({"error": "email not exists"}), 401
+        return jsonify({"error": "bad identifier"}), 401
     elif user.password != password:
         # bad password
         return jsonify({"error": "bad password"}), 401
     
     # create a new token with the user id inside
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "user_id": user.id }), 200
+    return jsonify({ "token": access_token, "id": user.id }), 200
