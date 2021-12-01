@@ -14,13 +14,55 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			token: "",
+			activeUserId: null,
 			singlePlace: null
 		},
 		actions: {
+			addUser: (name, lastname, username, email, password, category = false) => {
+				return fetch(process.env.BACKEND_URL + "/api/signup", {
+					method: "POST",
+					body: JSON.stringify({
+						name: name,
+						lastname: lastname,
+						username: username,
+						email: email,
+						password: password,
+						category: category
+					}),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				});
+			},
+
+			login: (email, username, password) => {
+				// Llamada a /login para obtener el token
+				fetch(process.env.BACKEND_URL + "/api/login", {
+					method: "POST",
+					body: JSON.stringify({ email: email, username: username, password: password }),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+					.then(res => res.json())
+					.then(res => {
+						if (res.token) {
+							setStore({ token: res.token });
+							setStore({ activeUserId: res.id });
+						}
+					})
+					.catch(error => console.error("Error: ", error));
+			},
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+
+			setActiveUserId: id => setStore({ activeUserId: id }),
+
+			setToken: tk => setStore({ token: tk }),
 
 			getMessage: () => {
 				// fetching data from the backend

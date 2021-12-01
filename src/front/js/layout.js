@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React, { useContext } from "react";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 
 import { Home } from "./pages/home";
@@ -7,8 +7,11 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
+import { Context } from "./store/appContext";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import { FormSignUp } from "./component/formsignup";
+import { FormLogin } from "./component/formlogin";
 
 import { Places } from "./pages/places";
 import { SinglePlace } from "./pages/singlePlace";
@@ -22,6 +25,7 @@ const Layout = () => {
 	// you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
 	const basename = process.env.BASENAME || "";
 
+	const { store } = useContext(Context);
 	return (
 		<div>
 			<BrowserRouter basename={basename}>
@@ -45,6 +49,12 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/demo">
 							<Demo />
+						</Route>
+						<Route exact path="/signup">
+							<FormSignUp />
+						</Route>
+						<Route exact path="/login">
+							{store.activeUserId ? <Redirect from="/login" to="/" /> : <FormLogin />}
 						</Route>
 						<Route exact path="/single/:theid">
 							<Single />
