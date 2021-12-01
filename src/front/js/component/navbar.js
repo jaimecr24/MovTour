@@ -10,7 +10,7 @@ export const Navbar = () => {
 		<nav className="navbar navbar-expand-lg" style={{ fontSize: "large", backgroundColor: "transparent" }}>
 			<div className="container">
 				<Link to="/">
-					<img src={cameraImgUrl} className="navbar-brand " style={{ width: "73px", marginLeft: "500px" }} />
+					<img src={cameraImgUrl} className="navbar-brand " style={{ width: "73px" }} />
 				</Link>
 			</div>
 

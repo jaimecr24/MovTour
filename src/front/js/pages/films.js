@@ -36,8 +36,10 @@ export const Films = () => {
 											<a className="btn btn-primary float-start">
 												<span className="text-warning ">
 													{" "}
-													<Link to={"/infofilms/films/" + item.id} style={{ color: "white" }}>
-														Aprender más
+													<Link
+														to="/infofilms"
+														onClick={() => localStorage.setItem("id", item.id)}>
+														<span className="btn btn-outline-primary">Aprender más</span>
 													</Link>
 												</span>
 											</a>

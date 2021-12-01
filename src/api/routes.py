@@ -148,10 +148,11 @@ def list_film():
 @api.route('/films/<int:film_id>', methods=['GET', 'DELETE'])
 def getfilm(film_id):
 
+    film = Film.query.filter_by(id=film_id).first()
+
     # GET a film
     if request.method == 'GET':
-        film = Film.query.filter_by(id=film_id) 
-    return jsonify(film.serialize()), 200
+        return jsonify(film.serialize()), 200
 
     # DELETE a film
     if request.method == 'DELETE':
