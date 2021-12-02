@@ -60,6 +60,8 @@ export const FormSignUp = () => {
 						}
 					})
 					.catch(function(error) {
+						document.getElementById("errorReg").innerText = error.message;
+						document.getElementById("errorReg").style.display = "block";
 						console.log("Error al registrar nuevo usuario: " + error.message);
 					});
 			}
