@@ -68,13 +68,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// fetching data from the backend
 				console.log(process.env.BACKEND_URL + "/api/places");
 				//fetch(process.env.BACKEND_URL + "api/places")
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places")
+				fetch(process.env.BACKEND_URL + "/api/places")
 					.then(resp => resp.json())
 					.then(data => setStore({ places: data }))
 					.catch(error => console.log("Error loading places from backend", error));
 			},
 			getSinglePlace: id => {
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places/" + id)
+				fetch(process.env.BACKEND_URL + "/api/places/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
