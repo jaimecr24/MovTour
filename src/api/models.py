@@ -49,6 +49,7 @@ class Film(db.Model):
     director = db.Column(db.String(80), unique=True, nullable=False)
     year = db.Column(db.Integer)
     description = db.Column(db.String)
+    urlPhoto = db.Column(db.String)
 
     def __repr__(self):
         return '<Film %r>' % self.name
@@ -59,6 +60,7 @@ class Film(db.Model):
             "name": self.name,
             "director": self.director,
             "year": self.year,
+            "urlPhoto": self.urlPhoto,
             "description": self.description
         }
 
@@ -167,25 +169,6 @@ class Comment(db.Model):
             "idPlace": self.idPlace,
             "description": self.description,
             "time": self.time
-        }
-
-
-class PhotoFilm(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    idFilm = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
-    urlPhoto = db.Column(db.String)
-    description = db.Column(db.String)
-    film = db.relationship('Film')
-    
-    def __repr__(self):
-        return '<PhotoFilm %r>' % self.id
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "idFilm": self.idFilm,
-            "urlPhoto": self.urlPhoto,
-            "description": self.description
         }
 
 

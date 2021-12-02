@@ -16,7 +16,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			token: "",
 			activeUserId: null,
-			singlePlace: null
+			singlePlace: null,
+			infoFilms: null
 		},
 		actions: {
 			addUser: (name, lastname, username, email, password, category = false) => {
@@ -97,6 +98,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				localStorage.removeItem("id");
 			},
+
+			fetchFilms: () => {
+				console.log(process.env.BACKEND_URL + "/api/films");
+				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films")
+					.then(resp => resp.json())
+					.then(data => setStore({ films: data }))
+					.catch(error => console.log("Error loading message from backend", error));
+			},
+
+			getInfoFilms: id => {
+				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							infoFilms: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+
+			resetInfoFilms: () => {
+				setStore({
+					infoFilms: null
+				});
+				localStorage.removeItem("id");
+			},
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
