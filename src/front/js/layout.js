@@ -42,11 +42,9 @@ const Layout = () => {
 						<Route exact path="/place">
 							<SinglePlace />
 						</Route>
-
 						<Route exact path="/films">
 							<Films />
 						</Route>
-
 						<Route exact path="/infofilms">
 							<InfoFilms />
 						</Route>

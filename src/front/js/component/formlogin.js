@@ -11,6 +11,8 @@ export const FormLogin = () => {
 		password: ""
 	});
 
+	const responseStatus = { 463: "nombre de usuario no existe", 464: "email no existe", 465: "contraseña incorrecta" };
+
 	const handleChange = e => {
 		setData({
 			...data,
@@ -32,11 +34,32 @@ export const FormLogin = () => {
 			// validation password
 			if (data.password.length < 6) msg = "Password debe tener como mínimo 6 caracteres";
 			else {
+				let username, email;
 				if (isUsername) {
-					actions.login(null, data.identifier, data.password);
+					username = data.identifier;
+					email = null;
 				} else {
-					actions.login(data.identifier, null, data.password);
+					username = null;
+					email = data.identifier;
 				}
+				actions
+					.login(email, username, data.password)
+					.then(res => {
+						if (res.status >= 400) {
+							document.getElementById("errorLogin").innerText = responseStatus[res.status];
+							document.getElementById("errorLogin").style.display = "block";
+						}
+						return res.json();
+					})
+					.then(json => {
+						if (json.token) {
+							actions.setToken(json.token);
+							actions.setActiveUserId(json.id);
+						}
+					})
+					.catch(function(error) {
+						console.log("Error al iniciar sesión: " + error.message);
+					});
 			}
 		}
 		if (msg !== "") {
@@ -44,8 +67,8 @@ export const FormLogin = () => {
 			for (let i = 0; i < form.children.length; i++) {
 				if (form.children[i].localName === "input") form.children[i].required = true;
 			}
-			document.getElementById("errorReg").innerText = msg;
-			document.getElementById("errorReg").style.display = "block";
+			document.getElementById("errorLogin").innerText = msg;
+			document.getElementById("errorLogin").style.display = "block";
 		}
 	};
 
@@ -53,7 +76,7 @@ export const FormLogin = () => {
 		<div className="custom-modal" style={{ paddingTop: "10rem" }}>
 			<div className="custom-modal-content mx-auto" style={{ width: "50rem" }}>
 				<div className="header d-flex flex-row">
-					<h3 className="text-white mx-auto my-3">Login</h3>
+					<h3 className="text-white mx-auto my-3">Iniciar sesión</h3>
 					<Link to="/">
 						<button
 							className="ms-auto mb-5 border-0 px-2"
@@ -66,7 +89,7 @@ export const FormLogin = () => {
 				<div align="center">
 					<img src={usericon} width="180" />
 					<div
-						id="errorReg"
+						id="errorLogin"
 						style={{
 							background: "#ffeeee",
 							color: "#cc3350",
@@ -83,7 +106,7 @@ export const FormLogin = () => {
 							<input
 								className="form-control fs-4"
 								name="identifier"
-								placeholder="email or username"
+								placeholder="Email o nombre de usuario"
 								onChange={handleChange}
 								value={data.identifier}
 							/>
@@ -96,7 +119,7 @@ export const FormLogin = () => {
 								type="password"
 								name="password"
 								className="form-control fs-4"
-								placeholder="Password"
+								placeholder="Contraseña"
 								onChange={handleChange}
 								value={data.password}
 							/>
@@ -106,13 +129,13 @@ export const FormLogin = () => {
 							className="btn w-50 fs-5 text-white mt-3"
 							style={{ background: "blue" }}
 							onClick={handleSubmit}>
-							LOGIN
+							ENTRAR
 						</button>
 					</form>
-					<div className="mt-5 fs-5 text-white">You are not a member?</div>
+					<div className="mt-5 fs-5 text-white">¿Todavía no se ha registrado?</div>
 					<Link to="/signup">
 						<button type="button" className="btn w-50 fs-5 text-white my-4" style={{ background: "blue" }}>
-							REGISTER NOW
+							REGISTRARSE AHORA
 						</button>
 					</Link>
 				</div>
@@ -122,16 +145,16 @@ export const FormLogin = () => {
 };
 
 function isValidName(name) {
-	let regName = /^[a-zA-Z ]+$/;
+	let regName = /^[a-zA-ZñÑ\s]+$/;
 	return regName.test(name);
 }
 
 function isValidEmail(email) {
-	let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	let regEmail = /^[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$/;
 	return regEmail.test(email);
 }
 
 function isValidUserName(username) {
-	let regUsername = /^[a-zA-Z0-9]+$/;
+	let regUsername = /^[a-zA-Z0-9ñÑ]+$/;
 	return regUsername.test(username);
 }
