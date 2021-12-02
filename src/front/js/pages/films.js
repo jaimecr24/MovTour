@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export const Films = () => {
 	const { store, actions } = useContext(Context);
 	useEffect(() => {
-		// actions.fetchPlanets();
+		actions.fetchFilms();
 	}, []);
 	return (
 		<div className="container-fluid content-row">
@@ -14,28 +14,44 @@ export const Films = () => {
 				<span>Descubre nuestro listado de peliculas!</span>
 			</div>
 			<div className="cards-content">
-				<div className="row col-auto" style={{ margin: "10px", width: "15 rem" }}>
-					<div className="card bg-dark">
-						<img
-							src="https://starwarsblog.starwars.com/wp-content/uploads/2018/10/mustafar-tall.jpg"
-							className="characters card-img-top mx-auto"
-							alt="..."
-						/>
-						<div className="card-body">
-							<h5
-								className="card-title text-warning"
-								style={{ textAlign: "center", paddingBottom: "40px" }}>
-								Titulo
-							</h5>
-							<a href="#" className="btn btn-primary float-start">
-								<span className="text-warning ">Aprender más</span>
-							</a>
-							<button className="btn btn-outline-warning float-end">
-								<i className="fas fa-heart" />
-							</button>
-						</div>
-					</div>
-				</div>
+				{store.films
+					? store.films.map((item, index) => {
+							return (
+								<div
+									className="row col-auto"
+									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
+									key={index}>
+									<div className="card bg-dark">
+										<img
+											src={item.urlPhoto}
+											className="characters card-img-top mx-auto"
+											alt="..."
+										/>
+										<div className="card-body">
+											<h5
+												className="card-title text-warning"
+												style={{ textAlign: "center", paddingBottom: "40px" }}>
+												{item.name}
+											</h5>
+											<a className="btn btn-primary float-start">
+												<span className="text-warning ">
+													{" "}
+													<Link
+														to="/infofilms"
+														onClick={() => localStorage.setItem("id", item.id)}>
+														<span className="btn btn-outline-primary">Aprender más</span>
+													</Link>
+												</span>
+											</a>
+											<button className="btn btn-outline-warning float-end">
+												<i className="fas fa-heart" />
+											</button>
+										</div>
+									</div>
+								</div>
+							);
+					  })
+					: "Cargando"}
 			</div>
 		</div>
 	);

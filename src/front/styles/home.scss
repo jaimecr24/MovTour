@@ -6,6 +6,7 @@ body {
 
     background: url(../img/fondo.jpg);
     background-size: cover;
+    
     color: white;
 
     font-family: Verdana;
@@ -14,4 +15,13 @@ body {
 h1 {
     
     font-family: 'Quicksand', sans-serif;
+}
+
+.col-md-6 {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 20px;
+
 }
