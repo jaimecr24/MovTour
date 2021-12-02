@@ -45,9 +45,9 @@ def signup():
             db.session.commit()
             return jsonify({"message": "ok", "id": userdata.id, "name":customer.name, "last_name":customer.last_name}), 200
         else:
-            return jsonify({"error":"username already exists"}), 400
+            return jsonify({"error":"username already exists"}), 461
     else:
-        return jsonify({"error":"user already exists"}), 400
+        return jsonify({"error":"email already exists"}), 462
 
 
 @api.route("/login", methods=["POST"])
@@ -56,22 +56,27 @@ def create_token():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     
-    # Query your database for email/username and password
+    # Query database for email/username and password
     if username is None:
-        user = User.query.filter_by(email=email).first()
+        if email is None:
+            return jsonify({"error":"username and email are null"}), 400
+        else:
+            user = User.query.filter_by(email=email).first()
     else:
         user = User.query.filter_by(username=username).first()
 
     if user is None:
         # the user was not found on the database
-        return jsonify({"error": "bad identifier"}), 401
+        if username is None:
+            return jsonify({"error": "bad email"}), 464
+        else:
+            return jsonify({"error": "bad username"}), 463
     elif user.password != password:
-        # bad password
-        return jsonify({"error": "bad password"}), 401
+        return jsonify({"error": "bad password"}), 465
     
     # create a new token with the user id inside
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "id": user.id }), 200
+    return jsonify({ "message": "ok", "token": access_token, "id": user.id }), 200
 
 
     #ALL PLACES GET
