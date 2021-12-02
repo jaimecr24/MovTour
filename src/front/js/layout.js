@@ -19,6 +19,8 @@ import { SinglePlace } from "./pages/singlePlace";
 import { Films } from "./pages/films";
 import { InfoFilms } from "./pages/infoFilms";
 
+import { Profile } from "./pages/profile";
+
 //create your first component
 const Layout = () => {
 	//the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -58,6 +60,9 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/login">
 							{store.activeUserId ? <Redirect from="/login" to="/" /> : <FormLogin />}
+						</Route>
+						<Route exact path="/profile">
+							{store.activeUserId ? <Profile /> : <Redirect from="/profile" to="/" />}
 						</Route>
 						<Route exact path="/single/:theid">
 							<Single />

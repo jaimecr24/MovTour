@@ -78,6 +78,22 @@ def create_token():
     access_token = create_access_token(identity=user.id)
     return jsonify({ "message": "ok", "token": access_token, "id": user.id }), 200
 
+#profile (protected), returns data of current user.
+@api.route("/profile", methods=["GET"])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user_id = get_jwt_identity()
+    
+    user = User.query.get(current_user_id)
+
+    customer = Customer.query.filter_by(idUser=current_user_id).first()
+    
+    return jsonify({
+        "id": user.id, "email": user.email, "username": user.username, "lastTime": user.lastTime, "category": user.category,
+        "name": customer.name, "last_name": customer.last_name
+        }), 200
+
 
     #ALL PLACES GET
 @api.route('/places', methods=['GET', 'POST'])

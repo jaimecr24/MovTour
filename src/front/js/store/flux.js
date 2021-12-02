@@ -48,6 +48,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
+			getUser: () => {
+				return fetch(process.env.BACKEND_URL + "/api/profile", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().token
+					}
+				});
+			},
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");

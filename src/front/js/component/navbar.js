@@ -72,9 +72,9 @@ export const Navbar = () => {
 					<div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
 						{store.activeUserId ? (
 							<>
-								<a className="dropdown-item" href="#">
-									Mi perfil
-								</a>
+								<Link to="/profile">
+									<span className="dropdown-item btn">Mi perfil</span>
+								</Link>
 								<a
 									className="dropdown-item"
 									href="#"
