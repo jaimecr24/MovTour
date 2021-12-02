@@ -14,8 +14,6 @@ export const FormSignUp = () => {
 		signed: false
 	});
 
-	const responseStatus = { 461: "nombre de usuario ya existe", 462: "email ya existe" };
-
 	const handleChange = e => {
 		setData({
 			...data,
@@ -26,44 +24,38 @@ export const FormSignUp = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
+		let msg = "";
+
 		if (!data.signed) {
-			let msg = "";
 			if (!isValidName(data.firstName)) msg = "Nombre no válido\n";
-			if (!isValidName(data.lastName)) msg += "Apellido no válido\n";
-			if (!isValidUserName(data.username)) msg += "Nombre de usuario no válido\n";
-			if (!isValidEmail(data.email)) msg += "Email no válido\n";
-			if (data.password1.length < 6) msg += "La contraseña debe tener como mínimo 6 caracteres\n";
-			if (data.password1 !== data.password2) msg += "Error en confirmación de password";
+			else if (!isValidName(data.lastName)) msg = "Apellido no válido\n";
+			else if (!isValidUserName(data.username)) msg = "Nombre de usuario no válido\n";
+			else if (!isValidEmail(data.email)) msg = "Email no válido\n";
+			else if (data.password1.length < 6) msg = "Password debe tener como mínimo 6 caracteres\n";
+			else if (data.password1 !== data.password2) msg = "Error en confirmación de password";
 			if (msg !== "") {
+				let form = document.getElementById("formReg");
+				for (let i = 0; i < form.children.length; i++) {
+					if (form.children[i].localName === "input") form.children[i].required = true;
+				}
 				document.getElementById("errorReg").innerText = msg;
 				document.getElementById("errorReg").style.display = "block";
 			} else {
 				actions
 					.addUser(data.firstName, data.lastName, data.username, data.email, data.password1)
-					.then(res => {
-						if (res.status >= 400) {
-							document.getElementById("errorReg").innerText = responseStatus[res.status];
-							document.getElementById("errorReg").style.display = "block";
-						}
-						return res.json();
-					})
+					.then(res => res.json())
 					.then(json => {
 						if (json["message"] == "ok") {
-							let label = document.getElementById("errorReg");
-							label.innerText = "Registro completo";
-							label.style.background = "#dcf0db";
-							label.style.color = "green";
-							label.style.display = "block";
-							let myform = document.getElementById("formReg");
-							for (let i = 1; i < 7; i++) myform.children[i].disabled = true;
-							setData({ ...data, signed: true });
+							//alert("user added ok");
+							//closeModal(e);
 						}
-					})
-					.catch(function(error) {
-						document.getElementById("errorReg").innerText = error.message;
-						document.getElementById("errorReg").style.display = "block";
-						console.log("Error al registrar nuevo usuario: " + error.message);
 					});
+				let label = document.getElementById("errorReg");
+				label.innerText = "Registro completo";
+				label.style.background = "#dcf0db";
+				label.style.color = "green";
+				label.style.display = "block";
+				setData({ ...data, signed: true });
 			}
 		}
 	};
@@ -72,7 +64,7 @@ export const FormSignUp = () => {
 		<div className="custom-modal" style={{ paddingTop: "10rem" }}>
 			<div className="custom-modal-content mx-auto" style={{ width: "50rem" }}>
 				<div className="header d-flex flex-row">
-					<h3 className="text-white mx-auto my-3">Nuevo usuario</h3>
+					<h3 className="text-white mx-auto my-3">Registro</h3>
 					<Link to="/">
 						<button
 							className="ms-auto mb-5 border-0 px-2"
@@ -100,9 +92,8 @@ export const FormSignUp = () => {
 							placeholder="Nombre"
 							onChange={handleChange}
 							value={data.firstName}
-							pattern="[a-zA-Z0-9ñÑ\s]+"
+							pattern="[a-zA-Z0-9\s]+"
 							minLength="1"
-							autoFocus
 						/>
 						<input
 							className="form-control fs-4 mb-3"
@@ -110,7 +101,7 @@ export const FormSignUp = () => {
 							placeholder="Apellido(s)"
 							onChange={handleChange}
 							value={data.lastName}
-							pattern="[a-zA-Z0-9ñÑ\s]+"
+							pattern="[a-zA-Z0-9\s]+"
 							minLength="1"
 						/>
 						<input
@@ -119,7 +110,7 @@ export const FormSignUp = () => {
 							placeholder="Nombre de usuario"
 							onChange={handleChange}
 							value={data.username}
-							pattern="[a-zA-Z0-9ñÑ]+"
+							pattern="[a-zA-Z0-9]+"
 							minLength="4"
 						/>
 						<input
@@ -128,13 +119,13 @@ export const FormSignUp = () => {
 							placeholder="Email"
 							onChange={handleChange}
 							value={data.email}
-							pattern="[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$"
+							pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
 						/>
 						<input
 							type="password"
 							name="password1"
 							className="form-control fs-4 mb-3"
-							placeholder="Contraseña"
+							placeholder="Password"
 							onChange={handleChange}
 							value={data.password1}
 							minLength="6"
@@ -143,7 +134,7 @@ export const FormSignUp = () => {
 							type="password"
 							name="password2"
 							className="form-control fs-4 mb-3"
-							placeholder="Confirmar contraseña"
+							placeholder="Confirme password"
 							onChange={handleChange}
 							value={data.password2}
 							minLength="6"
@@ -155,7 +146,7 @@ export const FormSignUp = () => {
 									id="btnReg"
 									className="btn w-50 fs-5 text-white mt-3 mb-5"
 									style={{ background: "blue" }}>
-									INICIAR SESIÓN
+									IR A LOGIN
 								</button>
 							</Link>
 						) : (
@@ -175,16 +166,16 @@ export const FormSignUp = () => {
 };
 
 function isValidName(name) {
-	let regName = /^[a-zA-ZñÑ\s]+$/;
+	let regName = /^[a-zA-Z ]+$/;
 	return regName.test(name);
 }
 
 function isValidEmail(email) {
-	let regEmail = /^[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$/;
+	let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	return regEmail.test(email);
 }
 
 function isValidUserName(username) {
-	let regUsername = /^[a-zA-Z0-9ñÑ]+$/;
+	let regUsername = /^[a-zA-Z0-9]+$/;
 	return regUsername.test(username);
 }
