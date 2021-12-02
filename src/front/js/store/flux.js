@@ -39,21 +39,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			login: (email, username, password) => {
 				// Llamada a /login para obtener el token
-				fetch(process.env.BACKEND_URL + "/api/login", {
+				return fetch(process.env.BACKEND_URL + "/api/login", {
 					method: "POST",
 					body: JSON.stringify({ email: email, username: username, password: password }),
 					headers: {
 						"Content-Type": "application/json"
 					}
-				})
-					.then(res => res.json())
-					.then(res => {
-						if (res.token) {
-							setStore({ token: res.token });
-							setStore({ activeUserId: res.id });
-						}
-					})
-					.catch(error => console.error("Error: ", error));
+				});
 			},
 
 			// Use getActions to call a function within a fuction
