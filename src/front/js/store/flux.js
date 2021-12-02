@@ -101,14 +101,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			fetchFilms: () => {
 				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch("https://3001-lime-cat-0lc0af7e.ws-eu20.gitpod.io/api/films")
+				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films")
 					.then(resp => resp.json())
 					.then(data => setStore({ films: data }))
 					.catch(error => console.log("Error loading message from backend", error));
 			},
 
 			getInfoFilms: id => {
-				fetch("https://3001-lime-cat-0lc0af7e.ws-eu20.gitpod.io/api/films/" + id)
+				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
@@ -125,7 +125,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				localStorage.removeItem("id");
 			},
-			
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();

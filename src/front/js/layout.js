@@ -16,10 +16,8 @@ import { FormLogin } from "./component/formlogin";
 import { Places } from "./pages/places";
 import { SinglePlace } from "./pages/singlePlace";
 
-
 import { Films } from "./pages/films";
 import { InfoFilms } from "./pages/infoFilms";
-
 
 //create your first component
 const Layout = () => {
@@ -43,11 +41,10 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/place">
 							<SinglePlace />
-							</Route>
+						</Route>
 
 						<Route exact path="/films">
 							<Films />
-
 						</Route>
 
 						<Route exact path="/infofilms">
