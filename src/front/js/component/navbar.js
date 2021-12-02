@@ -29,7 +29,7 @@ export const Navbar = () => {
 								marginRight: "30px",
 								color: "white"
 							}}>
-							<Link to="/films" style={{ color: "white" }}>
+							<Link to="/films" style={{ textDecoration: "none", color: "white" }}>
 								Películas
 							</Link>
 						</a>
@@ -41,7 +41,9 @@ export const Navbar = () => {
 								marginRight: "30px",
 								color: "white"
 							}}>
-							Países
+							<Link to="/countries" style={{ textDecoration: "none", color: "white" }}>
+								Países
+							</Link>
 						</a>
 					</li>
 					<li className="nav-item">

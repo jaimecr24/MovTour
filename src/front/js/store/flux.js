@@ -17,7 +17,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: "",
 			activeUserId: null,
 			singlePlace: null,
-			infoFilms: null
+			infoFilms: null,
+			infoCountries: null
 		},
 		actions: {
 			addUser: (name, lastname, username, email, password, category = false) => {
@@ -101,14 +102,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			fetchFilms: () => {
 				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films")
+				fetch("https://3001-sapphire-opossum-a18j2shc.ws-eu21.gitpod.io/api/films")
 					.then(resp => resp.json())
 					.then(data => setStore({ films: data }))
 					.catch(error => console.log("Error loading message from backend", error));
 			},
 
 			getInfoFilms: id => {
-				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films/" + id)
+				fetch("https://3001-sapphire-opossum-a18j2shc.ws-eu21.gitpod.io/api/films/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
@@ -122,6 +123,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 			resetInfoFilms: () => {
 				setStore({
 					infoFilms: null
+				});
+				localStorage.removeItem("id");
+			},
+			fetchCountries: () => {
+				console.log(process.env.BACKEND_URL + "/api/countries");
+				fetch("https://3001-sapphire-opossum-a18j2shc.ws-eu21.gitpod.io/api/countries")
+					.then(resp => resp.json())
+					.then(data => setStore({ countries: data }))
+					.catch(error => console.log("Error loading message from backend", error));
+			},
+
+			getInfoCountries: id => {
+				fetch("https://3001-sapphire-opossum-a18j2shc.ws-eu21.gitpod.io/api/countries/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							infoCountries: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+
+			resetInfoCountries: () => {
+				setStore({
+					infoCountries: null
 				});
 				localStorage.removeItem("id");
 			},
