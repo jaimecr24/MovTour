@@ -40,21 +40,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			login: (email, username, password) => {
 				// Llamada a /login para obtener el token
-				fetch(process.env.BACKEND_URL + "/api/login", {
+				return fetch(process.env.BACKEND_URL + "/api/login", {
 					method: "POST",
 					body: JSON.stringify({ email: email, username: username, password: password }),
 					headers: {
 						"Content-Type": "application/json"
 					}
-				})
-					.then(res => res.json())
-					.then(res => {
-						if (res.token) {
-							setStore({ token: res.token });
-							setStore({ activeUserId: res.id });
-						}
-					})
-					.catch(error => console.error("Error: ", error));
+				});
 			},
 
 			// Use getActions to call a function within a fuction
@@ -77,13 +69,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// fetching data from the backend
 				console.log(process.env.BACKEND_URL + "/api/places");
 				//fetch(process.env.BACKEND_URL + "api/places")
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places")
+				fetch(process.env.BACKEND_URL + "/api/places")
 					.then(resp => resp.json())
 					.then(data => setStore({ places: data }))
 					.catch(error => console.log("Error loading places from backend", error));
 			},
 			getSinglePlace: id => {
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places/" + id)
+				fetch(process.env.BACKEND_URL + "/api/places/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);

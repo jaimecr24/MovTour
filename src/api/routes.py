@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer, Film, Place, Country, FavPlace
+from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 
@@ -45,9 +45,9 @@ def signup():
             db.session.commit()
             return jsonify({"message": "ok", "id": userdata.id, "name":customer.name, "last_name":customer.last_name}), 200
         else:
-            return jsonify({"error":"username already exists"}), 400
+            return jsonify({"error":"username already exists"}), 461
     else:
-        return jsonify({"error":"user already exists"}), 400
+        return jsonify({"error":"email already exists"}), 462
 
 
 @api.route("/login", methods=["POST"])
@@ -56,22 +56,27 @@ def create_token():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     
-    # Query your database for email/username and password
+    # Query database for email/username and password
     if username is None:
-        user = User.query.filter_by(email=email).first()
+        if email is None:
+            return jsonify({"error":"username and email are null"}), 400
+        else:
+            user = User.query.filter_by(email=email).first()
     else:
         user = User.query.filter_by(username=username).first()
 
     if user is None:
         # the user was not found on the database
-        return jsonify({"error": "bad identifier"}), 401
+        if username is None:
+            return jsonify({"error": "bad email"}), 464
+        else:
+            return jsonify({"error": "bad username"}), 463
     elif user.password != password:
-        # bad password
-        return jsonify({"error": "bad password"}), 401
+        return jsonify({"error": "bad password"}), 465
     
     # create a new token with the user id inside
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "id": user.id }), 200
+    return jsonify({ "message": "ok", "token": access_token, "id": user.id }), 200
 
 
     #ALL PLACES GET
@@ -130,6 +135,7 @@ def getPlace(place_id):
         db.session.delete(place)
         db.session.commit()
         return jsonify({'message': f'place with id {place_id} deleted'}), 200
+
       
 @api.route('/films', methods=['GET', 'POST'])
 def list_film():
@@ -208,3 +214,79 @@ def getcountry(country_id):
     if request.method == 'DELETE':
         db.session.delete(country)
         db.session.commit()
+
+    #ALL SCENES GET
+@api.route('/scenes', methods=['GET', 'POST'])
+def listScenes():
+     # GET all scenes
+    list_scenes = Scene.query.all()
+    if request.method == 'GET':
+        return jsonify([scene.serialize() for scene in list_scenes]), 200
+
+    # POST a new scene
+    if request.method == 'POST':
+        data = request.json
+        id = data.get("id")
+        existsScene = Scene.query.filter_by(id=id).first()
+        existsPlace = Place.query.filter_by(id=data.get("idPlace")).first()
+        existsFilm = Film.query.filter_by(id=data.get("idFilm")).first()
+        #likes=FavPlace.query.filter_by(idPlace=id).count()
+
+    # Data validation
+    if existsScene is not None:        
+        raise APIException(f"scene with id {id} already exists", status_code=400)
+    if existsPlace is None:        
+        raise APIException("Place not found in data base", status_code=400)
+    if existsFilm is None:        
+        raise APIException("Film not found in data base", status_code=400)
+    if data is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'idPlace' not in data:
+        raise APIException('You need to add the place id', status_code=400)
+    if 'idFilm' not in data:
+        raise APIException('You need to add the film id', status_code=400)
+    
+    if 'id' in data:
+        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+    elif 'id' not in data:
+        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+    db.session.add(new_scene)
+    db.session.commit()
+    return jsonify([{'message': 'added ok'}, new_scene.serialize()]),200
+
+
+    #GET SCENES BY PLACE
+@api.route('/scenes/place/<int:place_id>', methods=['GET'])
+def listScenesByPlace(place_id):    
+    list_scenes_byPlace = Scene.query.filter_by(idPlace=place_id) 
+    return jsonify([scene.serialize() for scene in list_scenes_byPlace]), 200
+
+    #GET SCENES BY FILM
+@api.route('/scenes/film/<int:film_id>', methods=['GET'])
+def listScenesByFilm(film_id):    
+    list_scenes_byFilm = Scene.query.filter_by(idFilm=film_id) 
+    return jsonify([scene.serialize() for scene in list_scenes_byFilm]), 200
+
+
+   
+
+
+#SINGLE SCENE GET AND DELETE
+@api.route('/scenes/<int:scene_id>', methods=['GET', 'DELETE'])
+def getScene(scene_id):
+
+    scene = Scene.query.filter_by(id=scene_id).first()
+
+    # Data validation
+    if scene is None:
+        raise APIException(f"scene with id {scene_id} not found in data base", status_code=404)
+
+    #GET a scene
+    if request.method == 'GET':
+        return jsonify(scene.serialize()), 200
+
+    #DELETE a place
+    if request.method == 'DELETE':
+        db.session.delete(scene)
+        db.session.commit()
+        return jsonify({'message': f'scene with id {scene_id} deleted'}), 200
