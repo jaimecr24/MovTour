@@ -64,7 +64,7 @@ export const InfoCountries = () => {
 									paddingTop: "20px"
 								}}>
 								{" "}
-								·Países donde fue grabada:{" "}
+								·Películas que fueron grabadas en este país:{" "}
 							</h2>
 						</div>
 					</div>
@@ -72,7 +72,7 @@ export const InfoCountries = () => {
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
 							<div className="card bg-dark">
 								<img
-									src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg/1200px-Flag_of_the_United_Kingdom_%283-5%29.svg.png"
+									src={store.infoFilms.urlPhoto}
 									className="characters card-img-top mx-auto"
 									alt="..."
 								/>
@@ -80,12 +80,17 @@ export const InfoCountries = () => {
 									<h5
 										className="card-title text-warning"
 										style={{ textAlign: "center", paddingBottom: "40px" }}>
-										Titulo
+										{store.infoFilms.name}
 									</h5>
 									<a className="btn btn-primary float-start">
 										<span className="text-warning ">
 											{" "}
-											<span className="btn btn-outline-primary">Aprender más</span>
+											<span className="btn btn-outline-primary">		
+													<Link
+														to="/infofilms"
+														onClick={() => localStorage.setItem("id", item.id)}>
+														<span className="btn btn-outline-primary">Aprender más</span>
+													</Link>Aprender más</span>
 										</span>
 									</a>
 									<button className="btn btn-outline-warning float-end">
@@ -104,7 +109,7 @@ export const InfoCountries = () => {
 									paddingTop: "20px"
 								}}>
 								{" "}
-								·Sitios donde fue grabada:{" "}
+								·Sitios de rodaje en este país:{" "}
 							</h2>
 						</div>
 					</div>
