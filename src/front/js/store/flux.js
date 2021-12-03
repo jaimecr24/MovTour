@@ -16,6 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			token: "",
 			activeUserId: null,
+			lastTime: null,
 			singlePlace: null,
 			infoFilms: null
 		},
@@ -50,6 +51,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			getUser: () => {
 				return fetch(process.env.BACKEND_URL + "/api/profile", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().token
+					}
+				});
+			},
+
+			getFavPlaces: () => {
+				return fetch(process.env.BACKEND_URL + "/api/favorites", {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",

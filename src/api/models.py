@@ -8,7 +8,7 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     category = db.Column(db.Boolean(), unique=False, nullable=False) #false for user, true for admin
-    lastTime = db.Column(db.Date)
+    lastTime = db.Column(db.DateTime)
     customer = db.relationship("Customer", back_populates="user", uselist=False)
     
     def __repr__(self):
