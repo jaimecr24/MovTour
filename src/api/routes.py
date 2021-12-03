@@ -176,6 +176,44 @@ def getfilm(film_id):
         db.session.delete(film)
         db.session.commit()
 
+@api.route('/countries', methods=['GET', 'POST'])
+def list_country():
+     # GET all countries
+    if request.method == 'GET':
+        list_country = Country.query.all()
+    return jsonify([country.serialize() for country in list_country]), 200
+
+    # POST a new country
+    if request.method == 'POST':
+        country_to_add = request.json
+
+    # Data validation
+    if country_to_add is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'name' not in country_to_add:
+        raise APIException('You need to add the name', status_code=400)
+    if 'img_url' not in country_to_add:
+         url = None
+    else: url = country_to_add["img_url"]
+
+    new_country = Country(name=country_to_add["name"], img_url=url)
+    db.session.add(new_country)
+    db.session.commit()
+    return jsonify(new_country.serialize()), 200
+
+@api.route('/countries/<int:country_id>', methods=['GET', 'DELETE'])
+def getcountry(country_id):
+
+    country = Country.query.filter_by(id=country_id).first()
+
+    # GET a film
+    if request.method == 'GET':
+        return jsonify(country.serialize()), 200
+
+    # DELETE a film
+    if request.method == 'DELETE':
+        db.session.delete(country)
+        db.session.commit()
 
     #ALL SCENES GET
 @api.route('/scenes', methods=['GET', 'POST'])
