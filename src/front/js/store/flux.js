@@ -94,14 +94,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			fetchFilms: () => {
 				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch("https://3001-sapphire-aphid-buixcq7h.ws-eu21.gitpod.io/api/films")
+				fetch(process.env.BACKEND_URL + "/api/films")
 					.then(resp => resp.json())
 					.then(data => setStore({ films: data }))
 					.catch(error => console.log("Error loading message from backend", error));
 			},
 
 			getInfoFilms: id => {
-				fetch("https://3001-sapphire-aphid-buixcq7h.ws-eu21.gitpod.io/api/films/" + id)
+				fetch(process.env.BACKEND_URL + "/api/films/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
@@ -120,14 +120,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			fetchCountries: () => {
 				console.log(process.env.BACKEND_URL + "/api/countries");
-				fetch("https://3001-sapphire-aphid-buixcq7h.ws-eu21.gitpod.io/api/countries")
+				fetch(process.env.BACKEND_URL + "/api/countries")
 					.then(resp => resp.json())
 					.then(data => setStore({ countries: data }))
 					.catch(error => console.log("Error loading message from backend", error));
 			},
 
 			getInfoCountries: id => {
-				fetch("https://3001-sapphire-aphid-buixcq7h.ws-eu21.gitpod.io/api/countries/" + id)
+				fetch(process.env.BACKEND_URL + "/api/countries/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
