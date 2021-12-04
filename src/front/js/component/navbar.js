@@ -75,13 +75,7 @@ export const Navbar = () => {
 								<Link to="/profile">
 									<span className="dropdown-item btn">Mi perfil</span>
 								</Link>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={() => {
-										actions.setToken("");
-										actions.setActiveUserId(null);
-									}}>
+								<a className="dropdown-item" href="#" onClick={() => actions.logout()}>
 									Logout
 								</a>
 							</>

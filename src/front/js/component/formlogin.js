@@ -54,6 +54,7 @@ export const FormLogin = () => {
 						if (json.token) {
 							actions.setToken(json.token);
 							actions.setActiveUserId(json.id);
+							actions.setPreviousLoginTime(json.lastTime);
 						}
 					})
 					.catch(function(error) {
@@ -90,7 +91,7 @@ export const FormLogin = () => {
 					</Link>
 				</div>
 				<div align="center">
-					<img src={usericon} width="180" />
+					<img src={usericon} width="180px" />
 					<div
 						id="errorLogin"
 						style={{

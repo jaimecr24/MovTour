@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer, Film, Place, Country, FavPlace
+from api.models import db, User, Customer, Film, Place, Country, FavPlace, PhotoPlace
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 
@@ -113,11 +113,23 @@ def getFavPlaces():
     for elem in favPlaces:
         place = Place.query.get(elem.idPlace)
         country = Country.query.get(place.idCountry)
+        photo = PhotoPlace.query.filter_by(idPlace=elem.idPlace).first()
+        if not photo is None: photo = photo.urlPhoto
         res.append({
             "name":place.name, "latitude":place.latitude, "longitude":place.longitude,
-            "description":place.description, "countryName":country.name 
+            "description":place.description, "countryName":country.name, "urlPhoto":photo
         })
-    return jsonify({"count":favPlaces.count(), "message":"ok", "items":res}), 200
+    return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
+
+#Get photos of place
+@api.route('/place/<int:place_id>/photos', methods=['GET'])
+def getPhotoPlace(place_id):
+    photos = PhotoPlace.query.filter_by(idPlace=place_id)
+    res = []
+    for elem in photos:
+        res.append({ "url":elem.urlPhoto, "description":elem.description })
+
+    return jsonify({ "count":photos.count(), "msg":"ok", "items":res }), 200
 
 
     #ALL PLACES GET

@@ -1,66 +1,73 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/modal.scss";
+import usericon from "../../img/users.png";
 
 export const Profile = () => {
-	const { actions } = useContext(Context);
-	let name, lastName, username, lastTime;
-	let favorites = [];
-	let listItems = "";
+	const { store, actions } = useContext(Context);
 
-	actions
-		.getUser()
-		.then(res => res.json())
-		.then(response => {
-			name = response.name;
-			lastName = response.last_name;
-			username = response.username;
-			lastTime = new Date(response.lastTime);
-			document.getElementById("elemLastTime").innerHTML = lastTime.toLocaleString();
-			document.getElementById("elemUsername").innerHTML = username;
-			document.getElementById("elemName").innerHTML = name;
-			document.getElementById("elemLastName").innerHTML = lastName;
-		})
-		.catch(error => console.error("Error:", error));
+	const [data, setData] = useState({
+		name: "",
+		lastName: "",
+		username: "",
+		lastTime: null,
+		listItems: []
+	});
 
-	actions
-		.getFavPlaces()
-		.then(res => res.json())
-		.then(response => {
-			favorites = response.items;
-			document.getElementById("elemCountFav").innerHTML = favorites.length.toString();
-			listItems = favorites.map(value => `<div>${value.name} (${value.countryName})</div>`).join("");
-			console.log(listItems);
-			document.getElementById("ListFav").innerHTML = listItems.toString();
-		})
-		.catch(error => console.error("Error:", error));
+	useEffect(() => {
+		actions
+			.getUser()
+			.then(res => res.json())
+			.then(responseUser => {
+				actions
+					.getFavPlaces()
+					.then(res => res.json())
+					.then(responsePlaces => {
+						setData({
+							name: responseUser.name,
+							lastName: responseUser.last_name,
+							username: responseUser.username,
+							//last time login is stored when login function is called.
+							lastTime: new Date(store.previousLoginTime).toLocaleString(),
+							listItems: responsePlaces.items
+						});
+					})
+					.catch(error => console.error("Error:", error));
+			})
+			.catch(error => console.error("Error:", error));
+	}, []);
 
 	return (
-		<div className="container">
+		<div className="container bg-success text-white mt-4 pt-5">
+			<div className="fs-2 ps-3">{`Bienvenido, ${data.name}`}</div>
 			<div className="row">
-				<h2>Bienvenido, </h2>
-				<h2 id="elemUsername">Username</h2>
+				<div className="col-5 offset-1">
+					<div className="mt-4">
+						<div className="fs-3">Tus datos</div>
+						<hr />
+						<div className="mt-2">{`Nombre: ${data.name}`}</div>
+						<div className="mt-2">{`Apellidos: ${data.lastName}`}</div>
+						<div className="mt-2">{`Último inicio de sesión: ${data.lastTime}`}</div>
+					</div>
+				</div>
+				<div className="col-5 mt-5" align="center">
+					<img src={usericon} width="180px" />
+				</div>
 			</div>
-			<div className="row">
-				<h4>Nombre: </h4>
-				<h4 id="elemName">Nombre</h4>
-			</div>
-			<div className="row">
-				<h4>Apellidos: </h4>
-				<h4 id="elemLastName">Apellidos</h4>
-			</div>
-			<div className="row">
-				<h4>Último inicio de sesión: </h4>
-				<h4 id="elemLastTime">DateTime</h4>
-			</div>
-			<div className="row">
-				<h4>Lugares favoritos: </h4>
-				<h4 id="elemCountFav">NumFavoritos</h4>
-			</div>
-			<div className="row">
-				<h4>Lista: </h4>
-				<h4 id="ListFav">Lista de favoritos</h4>
+
+			<div className="py-5">
+				<div className="fs-3 col-10 offset-1">{`Lugares favoritos: ${data["listItems"].length}`}</div>
+				<div className="row mt-2">
+					<div className="col-10 offset-1">
+						{data["listItems"].map((value, index) => (
+							<div key={index} className="row border-top border-light py-1">
+								<img className="col-2" src={value.urlPhoto} />
+								<div className="col-4">{`${value.name} (${value.countryName})`}</div>
+								<div className="col-6">{value.description}</div>
+							</div>
+						))}
+					</div>
+				</div>
 			</div>
 		</div>
 	);
