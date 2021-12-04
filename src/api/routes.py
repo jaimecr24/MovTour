@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene
+from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 
@@ -73,10 +73,64 @@ def create_token():
             return jsonify({"error": "bad username"}), 463
     elif user.password != password:
         return jsonify({"error": "bad password"}), 465
-    
+
     # create a new token with the user id inside
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "message": "ok", "token": access_token, "id": user.id }), 200
+    # get the last time login for return in json, and update lastTime in database with the current value
+    # the first time after signup, the returned lastTime will be null
+    lastTime = user.lastTime
+    if lastTime: lastTime = lastTime.isoformat()
+    user.lastTime = datetime.now()
+    db.session.commit()
+    return jsonify({ "message": "ok", "token": access_token, "id": user.id, "lastTime": lastTime }), 200
+
+
+#profile (protected), returns data of current user.
+@api.route("/profile", methods=["GET"])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    customer = Customer.query.filter_by(idUser=current_user_id).first()
+    
+    return jsonify({
+        "id": user.id, "email": user.email, "username": user.username, "lastTime": user.lastTime, "category": user.category,
+        "name": customer.name, "last_name": customer.last_name
+        }), 200
+
+
+#favorite places of user (protected)
+@api.route("/favorites", methods=["GET"])
+@jwt_required()
+def getFavPlaces():
+    
+    current_user_id = get_jwt_identity()
+    favPlaces = FavPlace.query.filter_by(idUser=current_user_id)
+    if favPlaces is None:
+        return jsonify({"count":0, "message":"ok", "items":[]})
+        
+    res = []
+    for elem in favPlaces:
+        place = Place.query.get(elem.idPlace)
+        country = Country.query.get(place.idCountry)
+        photo = PhotoPlace.query.filter_by(idPlace=elem.idPlace).first()
+        if not photo is None: photo = photo.urlPhoto
+        res.append({
+            "name":place.name, "latitude":place.latitude, "longitude":place.longitude,
+            "description":place.description, "countryName":country.name, "urlPhoto":photo
+        })
+    return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
+
+#Get photos of place
+@api.route('/place/<int:place_id>/photos', methods=['GET'])
+def getPhotoPlace(place_id):
+    photos = PhotoPlace.query.filter_by(idPlace=place_id)
+    res = []
+    for elem in photos:
+        res.append({ "url":elem.urlPhoto, "description":elem.description })
+
+    return jsonify({ "count":photos.count(), "msg":"ok", "items":res }), 200
 
 
     #ALL PLACES GET
@@ -267,8 +321,6 @@ def listScenesByFilm(film_id):
     list_scenes_byFilm = Scene.query.filter_by(idFilm=film_id) 
     return jsonify([scene.serialize() for scene in list_scenes_byFilm]), 200
 
-
-   
 
 
 #SINGLE SCENE GET AND DELETE

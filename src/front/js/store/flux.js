@@ -16,11 +16,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			token: "",
 			activeUserId: null,
+			previousLoginTime: null,
 			singlePlace: null,
 			infoFilms: null,
 			infoCountries: null
 		},
 		actions: {
+			//Add a new user. Category is always false except for administrator.
 			addUser: (name, lastname, username, email, password, category = false) => {
 				return fetch(process.env.BACKEND_URL + "/api/signup", {
 					method: "POST",
@@ -38,8 +40,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
+			// Login the user by email or username. In response there will be the last time login.
 			login: (email, username, password) => {
-				// Llamada a /login para obtener el token
 				return fetch(process.env.BACKEND_URL + "/api/login", {
 					method: "POST",
 					body: JSON.stringify({ email: email, username: username, password: password }),
@@ -49,14 +51,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
+			// These functions must be called after call to login function !!
+			setPreviousLoginTime: t => setStore({ previousLoginTime: t }),
+			setActiveUserId: id => setStore({ activeUserId: id }),
+			setToken: tk => setStore({ token: tk }),
+
+			// Logout. Reset all variables related to user
+			logout: () =>
+				setStore({
+					token: "",
+					activeUserId: null,
+					previousLoginTime: null
+				}),
+
+			// Protected: get all data from user identified by token
+			getUser: () => {
+				return fetch(process.env.BACKEND_URL + "/api/profile", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().token
+					}
+				});
+			},
+
+			// Protected: get all favorite places from user identified by token
+			getFavPlaces: () => {
+				return fetch(process.env.BACKEND_URL + "/api/favorites", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().token
+					}
+				});
+			},
+
+			getPlacePhotos: idPlace => {
+				return fetch(process.env.BACKEND_URL + "/api/place/" + idPlace.toString() + "/photos");
+			},
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-
-			setActiveUserId: id => setStore({ activeUserId: id }),
-
-			setToken: tk => setStore({ token: tk }),
 
 			getMessage: () => {
 				// fetching data from the backend
