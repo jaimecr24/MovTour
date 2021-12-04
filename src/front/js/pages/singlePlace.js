@@ -22,13 +22,18 @@ export const SinglePlace = () => {
 								style={{ minHeight: "200px" }}
 							/>
 
-							<div>
-								<i className="fas fa-heart text-danger" /> {store.singlePlace.countLikes}{" "}
+							<div className="text-dark mt-1">
+								<button className="border rounded me-1">
+									<i className="fas fa-film" />
+								</button>
+								<span>
+									<i className="fas fa-heart text-danger" /> {store.singlePlace.countLikes}
+								</span>
 							</div>
 						</div>
 						<div className="col-6">
 							<p className="text-danger">{store.singlePlace.idCountry}</p>
-							<p>{store.singlePlace.description}</p>
+							<p className="text-dark">{store.singlePlace.description}</p>
 						</div>
 					</div>
 					<div className="row mt-5 mx-3 px-3">
@@ -40,8 +45,8 @@ export const SinglePlace = () => {
 							style={{ height: "350px" }}
 						/>
 						<div className="col-6">
-							<p>Dirección:</p>
-							<p>Coordenadas:</p>
+							<p className="text-dark">Dirección:</p>
+							<p className="text-dark">Coordenadas:</p>
 						</div>
 					</div>
 					<div className="row mt-5 px-5">

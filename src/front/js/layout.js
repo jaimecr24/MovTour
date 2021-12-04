@@ -18,6 +18,8 @@ import { SinglePlace } from "./pages/singlePlace";
 
 import { Films } from "./pages/films";
 import { InfoFilms } from "./pages/infoFilms";
+import { Countries } from "./pages/countries";
+import { InfoCountries } from "./pages/infoCountries";
 
 import { Profile } from "./pages/profile";
 
@@ -51,6 +53,13 @@ const Layout = () => {
 
 						<Route exact path="/infofilms">
 							<InfoFilms />
+						</Route>
+						<Route exact path="/countries">
+							<Countries />
+						</Route>
+
+						<Route exact path="/infocountries">
+							<InfoCountries />
 						</Route>
 						<Route exact path="/demo">
 							<Demo />

@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from api.models import db, User, Customer, Film, Place, Country, FavPlace, PhotoPlace
+from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 
@@ -83,6 +83,7 @@ def create_token():
     user.lastTime = datetime.now()
     db.session.commit()
     return jsonify({ "message": "ok", "token": access_token, "id": user.id, "lastTime": lastTime }), 200
+
 
 #profile (protected), returns data of current user.
 @api.route("/profile", methods=["GET"])
@@ -188,6 +189,7 @@ def getPlace(place_id):
         db.session.delete(place)
         db.session.commit()
         return jsonify({'message': f'place with id {place_id} deleted'}), 200
+
       
 @api.route('/films', methods=['GET', 'POST'])
 def list_film():
@@ -228,3 +230,115 @@ def getfilm(film_id):
         db.session.delete(film)
         db.session.commit()
 
+@api.route('/countries', methods=['GET', 'POST'])
+def list_country():
+     # GET all countries
+    if request.method == 'GET':
+        list_country = Country.query.all()
+    return jsonify([country.serialize() for country in list_country]), 200
+
+    # POST a new country
+    if request.method == 'POST':
+        country_to_add = request.json
+
+    # Data validation
+    if country_to_add is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'name' not in country_to_add:
+        raise APIException('You need to add the name', status_code=400)
+    if 'img_url' not in country_to_add:
+         url = None
+    else: url = country_to_add["img_url"]
+
+    new_country = Country(name=country_to_add["name"], img_url=url)
+    db.session.add(new_country)
+    db.session.commit()
+    return jsonify(new_country.serialize()), 200
+
+@api.route('/countries/<int:country_id>', methods=['GET', 'DELETE'])
+def getcountry(country_id):
+
+    country = Country.query.filter_by(id=country_id).first()
+
+    # GET a film
+    if request.method == 'GET':
+        return jsonify(country.serialize()), 200
+
+    # DELETE a film
+    if request.method == 'DELETE':
+        db.session.delete(country)
+        db.session.commit()
+
+    #ALL SCENES GET
+@api.route('/scenes', methods=['GET', 'POST'])
+def listScenes():
+     # GET all scenes
+    list_scenes = Scene.query.all()
+    if request.method == 'GET':
+        return jsonify([scene.serialize() for scene in list_scenes]), 200
+
+    # POST a new scene
+    if request.method == 'POST':
+        data = request.json
+        id = data.get("id")
+        existsScene = Scene.query.filter_by(id=id).first()
+        existsPlace = Place.query.filter_by(id=data.get("idPlace")).first()
+        existsFilm = Film.query.filter_by(id=data.get("idFilm")).first()
+        #likes=FavPlace.query.filter_by(idPlace=id).count()
+
+    # Data validation
+    if existsScene is not None:        
+        raise APIException(f"scene with id {id} already exists", status_code=400)
+    if existsPlace is None:        
+        raise APIException("Place not found in data base", status_code=400)
+    if existsFilm is None:        
+        raise APIException("Film not found in data base", status_code=400)
+    if data is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    if 'idPlace' not in data:
+        raise APIException('You need to add the place id', status_code=400)
+    if 'idFilm' not in data:
+        raise APIException('You need to add the film id', status_code=400)
+    
+    if 'id' in data:
+        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+    elif 'id' not in data:
+        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+    db.session.add(new_scene)
+    db.session.commit()
+    return jsonify([{'message': 'added ok'}, new_scene.serialize()]),200
+
+
+    #GET SCENES BY PLACE
+@api.route('/scenes/place/<int:place_id>', methods=['GET'])
+def listScenesByPlace(place_id):    
+    list_scenes_byPlace = Scene.query.filter_by(idPlace=place_id) 
+    return jsonify([scene.serialize() for scene in list_scenes_byPlace]), 200
+
+    #GET SCENES BY FILM
+@api.route('/scenes/film/<int:film_id>', methods=['GET'])
+def listScenesByFilm(film_id):    
+    list_scenes_byFilm = Scene.query.filter_by(idFilm=film_id) 
+    return jsonify([scene.serialize() for scene in list_scenes_byFilm]), 200
+
+
+
+#SINGLE SCENE GET AND DELETE
+@api.route('/scenes/<int:scene_id>', methods=['GET', 'DELETE'])
+def getScene(scene_id):
+
+    scene = Scene.query.filter_by(id=scene_id).first()
+
+    # Data validation
+    if scene is None:
+        raise APIException(f"scene with id {scene_id} not found in data base", status_code=404)
+
+    #GET a scene
+    if request.method == 'GET':
+        return jsonify(scene.serialize()), 200
+
+    #DELETE a place
+    if request.method == 'DELETE':
+        db.session.delete(scene)
+        db.session.commit()
+        return jsonify({'message': f'scene with id {scene_id} deleted'}), 200

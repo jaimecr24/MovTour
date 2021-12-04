@@ -18,7 +18,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			activeUserId: null,
 			previousLoginTime: null,
 			singlePlace: null,
-			infoFilms: null
+			infoFilms: null,
+			infoCountries: null
 		},
 		actions: {
 			//Add a new user. Category is always false except for administrator.
@@ -105,13 +106,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// fetching data from the backend
 				console.log(process.env.BACKEND_URL + "/api/places");
 				//fetch(process.env.BACKEND_URL + "api/places")
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places")
+				fetch(process.env.BACKEND_URL + "/api/places")
 					.then(resp => resp.json())
 					.then(data => setStore({ places: data }))
 					.catch(error => console.log("Error loading places from backend", error));
 			},
 			getSinglePlace: id => {
-				fetch("https://3001-olive-woodpecker-e6w7oxdp.ws-eu17.gitpod.io/api/places/" + id)
+				fetch(process.env.BACKEND_URL + "/api/places/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
@@ -130,14 +131,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			fetchFilms: () => {
 				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films")
+				fetch(process.env.BACKEND_URL + "/api/films")
 					.then(resp => resp.json())
 					.then(data => setStore({ films: data }))
 					.catch(error => console.log("Error loading message from backend", error));
 			},
 
 			getInfoFilms: id => {
-				fetch("https://3001-turquoise-tuna-zuu2xgjy.ws-eu21.gitpod.io/api/films/" + id)
+				fetch(process.env.BACKEND_URL + "/api/films/" + id)
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
@@ -151,6 +152,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 			resetInfoFilms: () => {
 				setStore({
 					infoFilms: null
+				});
+				localStorage.removeItem("id");
+			},
+			fetchCountries: () => {
+				console.log(process.env.BACKEND_URL + "/api/countries");
+				fetch(process.env.BACKEND_URL + "/api/countries")
+					.then(resp => resp.json())
+					.then(data => setStore({ countries: data }))
+					.catch(error => console.log("Error loading message from backend", error));
+			},
+
+			getInfoCountries: id => {
+				fetch(process.env.BACKEND_URL + "/api/countries/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							infoCountries: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+
+			resetInfoCountries: () => {
+				setStore({
+					infoCountries: null
 				});
 				localStorage.removeItem("id");
 			},
