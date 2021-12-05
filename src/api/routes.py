@@ -108,7 +108,7 @@ def getFavPlaces():
     current_user_id = get_jwt_identity()
     favPlaces = FavPlace.query.filter_by(idUser=current_user_id)
     if favPlaces is None:
-        return jsonify({"count":0, "message":"ok", "items":[]})
+        return jsonify({"count":0, "msg":"ok", "items":[]})
         
     res = []
     for elem in favPlaces:
@@ -117,10 +117,28 @@ def getFavPlaces():
         photo = PhotoPlace.query.filter_by(idPlace=elem.idPlace).first()
         if not photo is None: photo = photo.urlPhoto
         res.append({
-            "name":place.name, "latitude":place.latitude, "longitude":place.longitude,
+            "id": place.id, "name":place.name, "latitude":place.latitude, "longitude":place.longitude,
             "description":place.description, "countryName":country.name, "urlPhoto":photo
         })
     return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
+
+
+#Delete a single place in favorites of user
+@api.route("/favorite/<int:place_id>", methods=['DELETE'])
+@jwt_required()
+def delFavPlace(place_id):
+
+    current_user_id = get_jwt_identity()
+    favPlace = FavPlace.query.filter_by( idUser=current_user_id, idPlace=place_id ).first()
+    # ADD favorites must check the favorite is not repeated !!!!!!!!!
+    if favPlace is None:
+        return jsonify({"msg":"error: place not exists in favorites"}), 400
+    
+    print(favPlace)
+    db.session.delete(favPlace)
+    db.session.commit()
+    return jsonify({"msg":"ok"}), 200
+
 
 #Get photos of place
 @api.route('/place/<int:place_id>/photos', methods=['GET'])
