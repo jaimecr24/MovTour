@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/modal.scss";
 import usericon from "../../img/users.png";
@@ -42,6 +43,7 @@ export const Profile = () => {
 	}, []);
 
 	const handleCheckBox = e => {
+		// Disable btnDel if itemsChecked<1 or enable it if itemsChecked>=1
 		let btn = document.getElementById("btnDel");
 		if (e.target.checked) {
 			itemsChecked++;
@@ -129,6 +131,9 @@ export const Profile = () => {
 								/>
 								<img className="col-2" src={value.urlPhoto} />
 								<div className="col-4">{`${value.name} (${value.countryName})`}</div>
+								{
+									//<Link to={`/place/${value.id.toString()}`}></Link>
+								}
 								<div className="col-5">{value.description}</div>
 							</div>
 						))}

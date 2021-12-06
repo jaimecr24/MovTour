@@ -86,6 +86,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
+			// Protected: add a single place in favorites of user
+			addFavPlace: idPlace => {
+				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().token
+					}
+				});
+			},
+
 			// Protected: delete a single place in favorites of user
 			delFavPlace: idPlace => {
 				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {

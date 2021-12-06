@@ -101,6 +101,7 @@ def protected():
 
 
 #favorite places of user (protected)
+#for each place get also the country name and the first photo in PhotoPlace
 @api.route("/favorites", methods=["GET"])
 @jwt_required()
 def getFavPlaces():
@@ -123,22 +124,35 @@ def getFavPlaces():
     return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
 
 
-#Delete a single place in favorites of user
-@api.route("/favorite/<int:place_id>", methods=['DELETE'])
+#Add/Delete a single place in favorites of user
+@api.route("/favorite/<int:place_id>", methods=['DELETE','POST'])
 @jwt_required()
 def delFavPlace(place_id):
 
     current_user_id = get_jwt_identity()
-    favPlace = FavPlace.query.filter_by( idUser=current_user_id, idPlace=place_id ).first()
-    # ADD favorites must check the favorite is not repeated !!!!!!!!!
-    if favPlace is None:
-        return jsonify({"msg":"error: place not exists in favorites"}), 400
-    
-    print(favPlace)
-    db.session.delete(favPlace)
-    db.session.commit()
-    return jsonify({"msg":"ok"}), 200
-
+    if request.method == 'POST':
+        if Place.query.get(place_id):
+            #Check the place exists
+            if FavPlace.query.filter_by(idUser=current_user_id, idPlace=place_id).first():
+                #Check the favorite not exists
+                return jsonify({"msg":"error: favorite already exists"}), 400
+            #Add the favorite
+            favPlace = FavPlace(idUser=current_user_id, idPlace=place_id)
+            db.session.add(favPlace)
+            db.session.commit()
+            return jsonify({"msg":"ok"}), 200
+        else:
+            return jsonify({"msg": "idPlace not exists"}), 400
+    else:
+        #DELETE
+        favPlace = FavPlace.query.filter_by( idUser=current_user_id, idPlace=place_id ).first()
+        if favPlace is None:
+            #Check the favorite exists
+            return jsonify({"msg":"error: favorite not exists"}), 400
+        
+        db.session.delete(favPlace)
+        db.session.commit()
+        return jsonify({"msg":"ok"}), 200
 
 #Get photos of place
 @api.route('/place/<int:place_id>/photos', methods=['GET'])
